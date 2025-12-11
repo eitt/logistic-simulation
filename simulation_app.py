@@ -9,7 +9,6 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from scipy import stats
-import time
 
 # Configuración de página
 st.set_page_config(
@@ -19,22 +18,21 @@ st.set_page_config(
 )
 
 # ==========================================
-# Funciones Auxiliares y Estilos
+# Funciones Auxiliares
 # ==========================================
-def footer():
-    st.markdown("---")
-    st.markdown("Desarrollado con fines didácticos por **Leonardo H. Talero-Sarmiento** | [Ver perfil](https://apolo.unab.edu.co/en/persons/leonardo-talero)")
-
-def local_css(file_name):
-    # Placeholder si quisieras CSS personalizado
-    pass
+def show_author_header():
+    st.markdown("By **Leonardo H. Talero-Sarmiento** "
+                "[View profile](https://apolo.unab.edu.co/en/persons/leonardo-talero)")
 
 # ==========================================
 # Módulo 1: Estimación de Pi (Montecarlo)
 # ==========================================
 def page_montecarlo_pi():
-    st.title("🎲 Método de Montecarlo: Estimando $\pi$")
-    st.markdown("""
+    st.title("Método de Montecarlo: Estimando $\pi$")
+    show_author_header()
+    
+    # Usamos r""" para evitar conflictos con comandos LaTeX
+    st.markdown(r"""
     El método de Montecarlo utiliza el muestreo aleatorio para resolver problemas deterministas. 
     En este ejemplo, estimaremos el valor de $\pi$ "lanzando dardos" aleatorios a un cuadrado.
     
@@ -93,13 +91,15 @@ def page_montecarlo_pi():
             )
             st.plotly_chart(fig)
 
-    st.info("💡 **Nota Didáctica:** Observa que a medida que aumentas el número de puntos (Ley de los Grandes Números), la estimación converge hacia el valor real de 3.14159...")
+    st.info("Nota Didáctica: Observa que a medida que aumentas el número de puntos (Ley de los Grandes Números), la estimación converge hacia el valor real de 3.14159...")
 
 # ==========================================
 # Módulo 2: Optimización (Gradiente vs Genético)
 # ==========================================
 def page_optimization():
-    st.title("🏔️ Optimización: Descenso del Gradiente vs. Algorimo Genético")
+    st.title("Optimización: Descenso del Gradiente vs. Algoritmo Genético")
+    show_author_header()
+    
     st.markdown("""
     Aquí comparamos dos enfoques para encontrar el mínimo de una función matemática:
     1.  **Descenso del Gradiente:** Como una pelota rodando cuesta abajo. Funciona genial en funciones convexas (forma de tazón).
@@ -118,8 +118,7 @@ def page_optimization():
         grad = lambda x: 2*x
         st.latex(r"f(x) = x^2 \quad \text{(Solo un mínimo global en } x=0 \text{)}")
     else:
-        # Función compleja: f(x) = x^2 + 10*sin(x) (aproximadamente) pero escalada para visualización
-        # Usaremos una función tipo Rastrigin 1D simplificada
+        # Función compleja tipo Rastrigin 1D simplificada
         func = lambda x: 0.1*x**2 + 2*np.sin(x)
         grad = lambda x: 0.2*x + 2*np.cos(x)
         y = func(x_range)
@@ -155,7 +154,7 @@ def page_optimization():
         st.plotly_chart(fig_gd, use_container_width=True)
         
         if function_type == "No Convexa (Multimodal)":
-            st.warning("⚠️ Nota como el Gradiente puede quedarse atascado en un hueco local si no inicia cerca del óptimo global.")
+            st.warning("Nota como el Gradiente puede quedarse atascado en un hueco local si no inicia cerca del óptimo global.")
 
     # --- Algoritmo Genético ---
     with col2:
@@ -171,8 +170,8 @@ def page_optimization():
         history_pop = [population.copy()]
         
         for _ in range(generations):
-            # Evaluar aptitud (fitness) - Queremos minimizar, así que fitness negativo o inverso
-            fitness = -func(population) # Maximizamos el negativo para minimizar
+            # Evaluar aptitud (fitness) - fitness negativo para minimizar
+            fitness = -func(population)
             
             # Selección (Torneo simple)
             new_pop = []
@@ -186,20 +185,20 @@ def page_optimization():
             
             new_pop = np.array(new_pop)
             
-            # Cruce (Promedio simple para valores reales - Crossover)
+            # Cruce (Promedio simple)
             offspring = []
             for i in range(0, pop_size, 2):
                 p1 = new_pop[i]
                 p2 = new_pop[(i+1)%pop_size]
                 c1 = (p1 + p2)/2
-                c2 = (p1 + p2)/2 # Simplificación
+                c2 = (p1 + p2)/2 
                 offspring.extend([c1, c2])
             
             offspring = np.array(offspring)
 
             # Mutación
             mask = np.random.rand(pop_size) < mutation_rate
-            noise = np.random.normal(0, 2, pop_size) # Ruido gaussiano
+            noise = np.random.normal(0, 2, pop_size)
             offspring[mask] += noise[mask]
             
             # Clip para mantener en rango
@@ -224,14 +223,16 @@ def page_optimization():
         st.plotly_chart(fig_ga, use_container_width=True)
         
         if function_type == "No Convexa (Multimodal)":
-            st.success("✅ El AG explora múltiples áreas y tiene mayor probabilidad de 'saltar' fuera de óptimos locales.")
+            st.success("El AG explora múltiples áreas y tiene mayor probabilidad de 'saltar' fuera de óptimos locales.")
 
 # ==========================================
 # Módulo 3: Simulación de Procesos (CLT)
 # ==========================================
 def page_process_simulation():
-    st.title("🏭 Simulación de Procesos y Teorema del Límite Central")
-    st.markdown("""
+    st.title("Simulación de Procesos y Teorema del Límite Central")
+    show_author_header()
+    
+    st.markdown(r"""
     Imagina un proceso industrial con **5 actividades secuenciales**.
     Cada actividad tiene una duración variable (aleatoria).
     
@@ -268,12 +269,11 @@ def page_process_simulation():
             st.markdown("---")
 
     with col2:
-        if st.button("🚀 Simular Proceso", type="primary"):
+        if st.button("Simular Proceso", type="primary"):
             # Lógica de Simulación
             scenario_times = np.zeros(n_scenarios)
             
             # Simular actividad por actividad y sumar
-            # Vectorizamos para velocidad
             for act in activities:
                 if act["type"] == "uniform":
                     t = np.random.uniform(act["params"][0], act["params"][1], n_scenarios)
@@ -302,8 +302,6 @@ def page_process_simulation():
             # Añadir curva normal teórica
             x_axis = np.linspace(np.min(scenario_times), np.max(scenario_times), 1000)
             pdf = stats.norm.pdf(x_axis, mu, sigma)
-            # Escalar pdf para que coincida con el histograma (aprox)
-            # Nota: Esto es visual. Para precisión exacta usar histnorm='probability density'
             
             fig.add_trace(go.Scatter(x=x_axis, y=pdf * n_scenarios * (np.max(scenario_times)-np.min(scenario_times))/50, 
                                      mode='lines', name='Ajuste Normal (Teórico)',
@@ -312,7 +310,7 @@ def page_process_simulation():
             fig.update_layout(showlegend=True)
             st.plotly_chart(fig, use_container_width=True)
             
-            st.markdown("""
+            st.markdown(r"""
             ### Interpretación Teórica
             Observa el histograma. Aunque hayas seleccionado distribuciones planas (Uniforme) o sesgadas (Triangular/Exponencial) para las actividades individuales, la suma total tiene esa forma de campana característica.
             
@@ -337,6 +335,7 @@ def main():
 
     if choice == "Inicio":
         st.title("Laboratorio de Simulación Computacional")
+        show_author_header()
         st.markdown("""
         Bienvenido a esta aplicación interactiva diseñada para la enseñanza de **Simulación y Modelado**.
         
@@ -356,8 +355,6 @@ def main():
         
     elif choice == "Simulación de Procesos (CLT)":
         page_process_simulation()
-    
-    footer()
 
 if __name__ == "__main__":
     main()
