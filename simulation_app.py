@@ -194,11 +194,16 @@ def page_optimization():
                 c2 = (p1 + p2)/2 
                 offspring.extend([c1, c2])
             
+            # --- CORRECCIÓN DE ERROR ---
+            # Si pop_size es impar, offspring tendrá un elemento más. Lo recortamos.
             offspring = np.array(offspring)
+            offspring = offspring[:pop_size]
 
             # Mutación
             mask = np.random.rand(pop_size) < mutation_rate
             noise = np.random.normal(0, 2, pop_size)
+            
+            # Ahora offspring y mask tienen el mismo tamaño
             offspring[mask] += noise[mask]
             
             # Clip para mantener en rango
